@@ -1,4 +1,5 @@
 // blog-frontend/src/pages/LoginPage.js
+import './Login.css';
 import  { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +28,7 @@ const LoginPage = () => {
       <form onSubmit={handleSubmit}>
         {error && <p className="error-message">{error}</p>}
         <div>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email     :</label>
           <input
             type="email"
             id="email"
@@ -37,7 +38,7 @@ const LoginPage = () => {
           />
         </div>
         <div>
-          <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Password:</label>
           <input
             type="password"
             id="password"

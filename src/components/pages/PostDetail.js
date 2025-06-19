@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import './PostDetail.css';
+import  { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import API from '../../api/axiosInstance';
+import CommentSection from '../pages/CommentSection';
+
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -72,6 +75,8 @@ const PostDetail = () => {
 
   return (
     <div className="post-detail">
+      
+
       {post.image && (
         <img
           src={`http://localhost:5000/uploads/${post.image}`}
@@ -130,10 +135,11 @@ const PostDetail = () => {
               <button onClick={handleDelete} style={{ color: 'red', marginLeft: '10px' }}>
                 Delete
               </button>
+              
             </div>
           )}
         </>
-      )}
+      )}<CommentSection postId={post._id} />
     </div>
   );
 };

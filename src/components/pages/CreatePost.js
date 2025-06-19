@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './CreatePost.css'; // import the CSS file
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
@@ -22,20 +23,20 @@ const CreatePost = () => {
     formData.append('content', content);
     formData.append('category', category);
     if (image) {
-      formData.append('image', image); // name must match multer config: `upload.single('image')`
+      formData.append('image', image);
     }
 
     try {
-    const user = JSON.parse(localStorage.getItem('user'));
-     const token = user?.token;
+      const user = JSON.parse(localStorage.getItem('user'));
+      const token = user?.token;
 
-if (!token) {
-  setMessage('You must be logged in to create a post.');
-  return;
-}
+      if (!token) {
+        setMessage('You must be logged in to create a post.');
+        return;
+      }
+
       const response = await axios.post('http://localhost:5000/api/posts', formData, {
         headers: {
-         
           Authorization: `Bearer ${token}`,
         },
       });
@@ -49,7 +50,7 @@ if (!token) {
   };
 
   return (
-    <div>
+    <div className="create-post-container">
       <h2>Create Post</h2>
       {message && <p>{message}</p>}
       <form onSubmit={handleSubmit} encType="multipart/form-data">

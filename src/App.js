@@ -1,3 +1,4 @@
+
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -9,6 +10,7 @@ import CreatePost from './components/pages/CreatePost';
 import UserDashboardPage from './components/pages/UserDashboardPage';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
+
 import UserProfile from './components/pages/UserProfile';
 
 function App() {

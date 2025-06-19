@@ -1,6 +1,7 @@
 import  { useEffect, useState } from 'react';
 import API from '../../api/axiosInstance';
 import { useAuth } from '../../context/AuthContext';
+import './UserProfile.css';
 
 const UserProfile = () => {
   const { user, setUser } = useAuth(); // assuming you have setUser in context to update user data after edit

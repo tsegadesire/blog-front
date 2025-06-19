@@ -1,0 +1,84 @@
+.user-profile {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: sans-serif;
+}
+
+.user-profile h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+  text-align: center;
+}
+
+.user-profile img {
+  display: block;
+  margin: 0 auto 1rem;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+}
+
+.user-profile p {
+  font-size: 1rem;
+  color: #374151;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.user-profile strong {
+  color: #111827;
+}
+
+.user-profile form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.user-profile label {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.user-profile input[type="text"],
+.user-profile input[type="email"],
+.user-profile input[type="file"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  font-size: 1rem;
+}
+
+.user-profile button {
+  padding: 0.6rem 1.2rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.user-profile button:hover {
+  background-color: #1d4ed8;
+}
+
+.user-profile button[type="button"] {
+  background-color: #9ca3af; /* Gray for Cancel button */
+}
+
+.user-profile button[type="button"]:hover {
+  background-color: #6b7280;
+}

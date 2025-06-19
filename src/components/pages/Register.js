@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import './Register.css'
+import  { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -25,7 +26,7 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="max-w-md mx-auto mt-10 space-y-4 p-4 border rounded">
+    <form onSubmit={handleRegister} className="register-form">
       <h2 className="text-xl font-bold">Register</h2>
       <input
         type="text"

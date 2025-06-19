@@ -1,0 +1,59 @@
+.user-dashboard-page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: sans-serif;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.user-dashboard-page h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.user-dashboard-page p {
+  margin-bottom: 1rem;
+  color: #4b5563; /* Tailwind gray-700 */
+}
+
+.dashboard-actions {
+  margin: 1rem 0;
+}
+
+.dashboard-actions .btn {
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  background-color: #2563eb; /* Tailwind blue-600 */
+  color: white;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.dashboard-actions .btn:hover {
+  background-color: #1d4ed8; /* Tailwind blue-700 */
+}
+
+.error-message {
+  color: #dc2626; /* Tailwind red-600 */
+  background-color: #fee2e2; /* Tailwind red-100 */
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin: 1rem 0;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #e5e7eb; /* Tailwind gray-200 */
+}

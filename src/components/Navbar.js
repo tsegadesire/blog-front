@@ -1,8 +1,7 @@
-// blog-frontend/src/components/Navbar.js
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-// Create this CSS file
+import './Navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -15,22 +14,36 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <Link to="/">My Blog</Link>
+      <div>
+        <Link to="/" className="navbar-brand">My Blog</Link>
       </div>
-      <ul className="navbar-links">
-        <li><Link to="/">Home</Link></li>
+      <ul className="navbar-menu">
+        <li>
+          <Link to="/" className="navbar-link">Home</Link>
+        </li>
+
         {user ? (
           <>
-            <li><Link to="/create-post">Create Post</Link></li>
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            
-            <li><button onClick={handleLogout}>Logout ({user.name})</button></li>
+            <li>
+              <Link to="/create-post" className="navbar-link">Create Post</Link>
+            </li>
+            <li>
+              <Link to="/dashboard" className="navbar-link">Dashboard</Link>
+            </li>
+            <li>
+              <button onClick={handleLogout} className="logout-button">
+                Logout ({user.name})
+              </button>
+            </li>
           </>
         ) : (
           <>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/register">Register</Link></li>
+            <li>
+              <Link to="/login" className="navbar-link">Login</Link>
+            </li>
+            <li>
+              <Link to="/register" className="navbar-link">Register</Link>
+            </li>
           </>
         )}
       </ul>

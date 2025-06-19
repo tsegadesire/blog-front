@@ -1,4 +1,6 @@
 // blog-frontend/src/pages/UserDashboardPage.js
+import './UserDashboard.css';
+
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import * as postService from '../../api/postService'; // Assuming you have a function to fetch user's posts
@@ -48,9 +50,13 @@ const UserDashboardPage = () => {
 
   return (
     <div className="user-dashboard-page">
-      <h1>Welcome, {user.name}!</h1> {/* Display user's name */}
+      <h1>Welcome, {user.username}!</h1> {/* Display user's name */}
       <p>Your email: {user.email}</p>
-  <Link to="/profile">Profile</Link>
+  <Link to="/profile"> <img
+  src={`http://localhost:5000/uploads/profile/${user.profilePic}`}
+  alt="Profile"
+  style={{ width: '100px', borderRadius: '50%' }}
+/></Link>
       <div className="dashboard-actions">
         <Link to="/create-post" className="btn btn-primary">Create New Post</Link>
         {/* Add more actions here, e.g., <Link to="/edit-profile">Edit Profile</Link> */}

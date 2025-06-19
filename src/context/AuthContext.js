@@ -1,6 +1,5 @@
-// blog-frontend/src/context/AuthContext.js
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import * as authService from '../api/authService'; // We'll create this
+import * as authService from '../api/authService';
 
 const AuthContext = createContext(null);
 
@@ -9,7 +8,6 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for user in localStorage on initial load
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -49,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -26,14 +26,16 @@ const CreatePost = () => {
     }
 
     try {
-      const token = localStorage.getItem('token'); // or however you store your JWT
+    const user = JSON.parse(localStorage.getItem('user'));
+     const token = user?.token;
+
 if (!token) {
   setMessage('You must be logged in to create a post.');
   return;
 }
       const response = await axios.post('http://localhost:5000/api/posts', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+         
           Authorization: `Bearer ${token}`,
         },
       });

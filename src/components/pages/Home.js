@@ -30,11 +30,12 @@ const Home= () => {
     <div className="home-page">
       <h1>Latest Blog Posts</h1>
       <div className="posts-grid">
-        {posts.length > 0 ? (
-          posts.map((post) => <PostCard key={post._id} post={post} />)
-        ) : (
-          <p>No posts available yet. Create one!</p>
-        )}
+        
+       {posts.length > 0 ? (
+  posts.map((post) => <PostCard key={post._id} post={post} />)
+) : (
+  <p>No posts available yet. Create one!</p>
+)}
       </div>
     </div>
   );

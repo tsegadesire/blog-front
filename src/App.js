@@ -9,6 +9,7 @@ import CreatePost from './components/pages/CreatePost';
 import UserDashboardPage from './components/pages/UserDashboardPage';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
+import UserProfile from './components/pages/UserProfile';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           {/* Protected Routes */}
           <Route path="/create-post" element={<PrivateRoute><CreatePost /></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><UserDashboardPage /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><UserProfile /></PrivateRoute>} />
         </Routes>
       </main>
     </AuthProvider>

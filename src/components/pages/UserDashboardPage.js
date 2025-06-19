@@ -50,7 +50,7 @@ const UserDashboardPage = () => {
     <div className="user-dashboard-page">
       <h1>Welcome, {user.name}!</h1> {/* Display user's name */}
       <p>Your email: {user.email}</p>
-
+  <Link to="/profile">Profile</Link>
       <div className="dashboard-actions">
         <Link to="/create-post" className="btn btn-primary">Create New Post</Link>
         {/* Add more actions here, e.g., <Link to="/edit-profile">Edit Profile</Link> */}

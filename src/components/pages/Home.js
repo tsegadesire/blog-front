@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as postService from '../../api/postService';
-import PostCard from '../PostCard'; // We'll create this
+import PostCard from '../pages/PostCard'; // We'll create this
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

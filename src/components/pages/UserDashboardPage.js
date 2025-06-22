@@ -4,7 +4,7 @@ import './UserDashboard.css';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import * as postService from '../../api/postService'; // Assuming you have a function to fetch user's posts
-import PostCard from '../../components/PostCard'; // Re-use the PostCard component
+import PostCard from '../pages/PostCard'; // Re-use the PostCard component
 import { Link } from 'react-router-dom'// Create this CSS file for styling
 
 const UserDashboardPage = () => {

@@ -68,6 +68,8 @@ const PostDetail = () => {
       alert(err.response?.data?.message || 'Update failed');
     }
   };
+  const userToken = localStorage.getItem('token');
+ 
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -139,7 +141,11 @@ const PostDetail = () => {
             </div>
           )}
         </>
-      )}<CommentSection postId={post._id} />
+      )}
+   {post && post._id && <CommentSection postId={post._id} token={userToken} />}
+
+
+
     </div>
   );
 };

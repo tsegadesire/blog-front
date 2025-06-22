@@ -20,10 +20,12 @@ export const AuthProvider = ({ children }) => {
       const userData = await authService.login(email, password);
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
       return userData;
     } catch (error) {
       setUser(null);
       localStorage.removeItem('user');
+        localStorage.removeItem('token');
       throw error;
     }
   };
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }) => {
       const userData = await authService.register(name, email, password);
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', userData.token);
       return userData;
     } catch (error) {
       setUser(null);
@@ -44,10 +47,11 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, setUser ,token: user?.token}}>
       {children}
     </AuthContext.Provider>
   );

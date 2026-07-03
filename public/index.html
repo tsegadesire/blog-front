@@ -14,7 +14,25 @@
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-      <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Tailwind CDN configuration; update these once brand colors are confirmed
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                DEFAULT: '#1d4ed8', // placeholder primary
+                dark: '#1e3a8a',
+                light: '#60a5fa',
+                accent: '#10b981'
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--

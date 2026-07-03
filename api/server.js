@@ -11,6 +11,7 @@ const user = require('./routes/user');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const uploadRoutes = require('./routes/uploadRoutes');
 const cors = require('cors');
+const adminRoutes = require('./routes/adminRoutes');
 
 
 
@@ -23,7 +24,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:3000', // <--- EXACT URL OF YOUR FRONTEND
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Allowed HTTP methods
   credentials: true, // Allow cookies and authorization headers to be sent
 }));
 
@@ -35,6 +36,9 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/users', user);
 app.use('/uploads/profile', express.static(path.join(__dirname, 'uploads/profile')));
 app.use('/api/posts', postRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/comments', commentRoutes);
+
 app.use(errorMiddleware);
 
 

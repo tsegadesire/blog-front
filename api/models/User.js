@@ -9,8 +9,18 @@ const userSchema = new mongoose.Schema({
   profilePic: {
     type: String, // store filename or image URL
     default: ''
-  }, 
-});
+  },
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'superadmin'],
+    default: 'user',
+    required: true,
+  },
+  active: {
+    type: Boolean,
+    default: true,
+  },
+}, { timestamps: true });
 
 // Encrypt password before saving
 userSchema.pre('save', async function (next) {

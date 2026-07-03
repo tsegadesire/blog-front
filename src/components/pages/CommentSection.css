@@ -1,0 +1,161 @@
+.cs-section {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #fdfdfd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  font-family: 'Georgia', serif;
+  color: #2c3e50;
+}
+
+.cs-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1a1a1a;
+}
+
+.cs-form,
+.cs-reply-form {
+  margin-bottom: 1.5rem;
+}
+
+.cs-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+}
+
+.cs-btn {
+  padding: 0.5rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cs-btn-primary {
+  background-color: #2980b9;
+  color: white;
+}
+
+.cs-btn-primary:hover {
+  background-color: #1c5980;
+}
+
+.cs-login {
+  font-style: italic;
+  color: #7f8c8d;
+}
+
+.cs-loading,
+.cs-error {
+  margin: 1rem 0;
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+.cs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cs-card {
+  padding: 1rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cs-reply-card {
+  margin-top: 1rem;
+  margin-left: 2rem;
+  background-color: #f8f8f8;
+}
+
+.cs-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.5rem;
+}
+
+.cs-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.cs-meta {
+  flex-grow: 1;
+}
+
+.cs-author {
+  font-weight: bold;
+  color: #34495e;
+}
+
+.cs-date {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+.cs-content {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.cs-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 0.5rem;
+}
+
+.cs-icon {
+  background: none;
+  border: none;
+  color: #2980b9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cs-icon:hover {
+  color: #1c5980;
+}
+
+.cs-like.liked {
+  color: #e74c3c;
+}
+
+.cs-delete {
+  color: #e74c3c;
+}
+
+.cs-delete:hover {
+  color: #c0392b;
+}
+
+@media screen and (max-width: 600px) {
+  .cs-section {
+    padding: 1rem;
+  }
+
+  .cs-reply-card {
+    margin-left: 1rem;
+  }
+
+  .cs-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

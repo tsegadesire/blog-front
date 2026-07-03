@@ -1,5 +1,5 @@
-import './Register.css'
-import  { useState } from 'react';
+import './Auth.css';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,36 +26,45 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleRegister} className="register-form">
-      <h2 className="text-xl font-bold">Register</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        className="w-full p-2 border"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full p-2 border"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full p-2 border"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit" className="w-full bg-green-500 text-white py-2 rounded">
-        Register
-      </button>
-    </form>
+    <div className="auth-page">
+      <form onSubmit={handleRegister} className="auth-form">
+        <h2>Join <span>TechEthio IT Solution PLC</span></h2>
+        <p className="subtitle">Create your account</p>
+
+        <label>Username</label>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+
+        <label>Email</label>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+
+        <label>Password</label>
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        <button type="submit">Register</button>
+
+        <p className="switch-link">
+          Already have an account? <a href="/login">Login</a>
+        </p>
+      </form>
+    </div>
   );
 };
 

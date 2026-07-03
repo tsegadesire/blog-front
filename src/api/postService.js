@@ -47,6 +47,28 @@ const deletePost = async (id) => {
   return response.data;
 };
 
+// Reactions & Views
+const likePost = async (id) => {
+  const response = await API.post(`/posts/${id}/like`, {}, getAuthHeader());
+  return response.data; // { likes }
+};
+
+const unlikePost = async (id) => {
+  const response = await API.post(`/posts/${id}/unlike`, {}, getAuthHeader());
+  return response.data; // { likes }
+};
+
+const incrementView = async (id) => {
+  const response = await API.post(`/posts/${id}/view`);
+  return response.data; // { views }
+};
+
+// Analytics
+const getMyAnalytics = async () => {
+  const response = await API.get('/posts/my-analytics', getAuthHeader());
+  return response.data; // { totalViews, totalLikes, totalComments }
+};
+
 export {
   getPosts,
   getPostById,
@@ -54,4 +76,8 @@ export {
   updatePost,
   deletePost,
   getUserPosts,
+  likePost,
+  unlikePost,
+  incrementView,
+  getMyAnalytics,
 };

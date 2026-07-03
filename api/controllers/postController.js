@@ -1,5 +1,6 @@
 // blog-backend/controllers/postController.js (Updated)
 const Post = require('../models/Post'); // Assuming you have a Post model
+const Comment = require('../models/Comment');
 
 // @desc    Get all posts
 // @route   GET /api/posts
@@ -28,7 +29,9 @@ exports.getPostById = async (req, res) => {
   }
 };
 
-
+// @desc    Get user's posts
+// @route   GET /api/posts/user/:id
+// @access  Public
 exports.getUserPosts = async (req, res) => {
   try {
     // req.user is populated by the protect middleware
@@ -38,21 +41,17 @@ exports.getUserPosts = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-// --- END NEW CONTROLLER FUNCTION ---
 
 // @desc    Create new post
 // @route   POST /api/posts
 // @access  Private
-
-
 exports.createPost = async (req, res) => {
   try {
     if (!req.user || !req.user._id) {
-  return res.status(401).json({ message: "Unauthorized: No user info found" });
-}
+      return res.status(401).json({ message: "Unauthorized: No user info found" });
+    }
 
-    const { title, summary, content, category ,} = req.body;
-    
+    const { title, summary, content, category } = req.body;
     const image = req.file ? req.file.filename : null;
 
     if (!title || !summary || !content) {
@@ -78,8 +77,6 @@ exports.createPost = async (req, res) => {
   }
 };
 
-
-
 // @desc    Update a post
 // @route   PUT /api/posts/:id
 // @access  Private
@@ -90,8 +87,8 @@ exports.updatePost = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Ensure the logged-in user is the owner of the post
-    if (post.user.toString() !== req.user._id.toString()) {
+    // Ensure the logged-in user is the owner of the post, unless admin
+    if (post.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(401).json({ message: 'Not authorized to update this post' });
     }
 
@@ -115,13 +112,80 @@ exports.deletePost = async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    // Ensure the logged-in user is the owner of the post
-    if (post.user.toString() !== req.user._id.toString()) {
+    // Ensure the logged-in user is the owner of the post, unless admin
+    if (post.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(401).json({ message: 'Not authorized to delete this post' });
     }
 
     await Post.deleteOne({ _id: req.params.id }); // Mongoose 6+
     res.status(200).json({ message: 'Post removed' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Like a post
+// @route   POST /api/posts/:id/like
+// @access  Private
+exports.likePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    const userId = req.user._id.toString();
+    if (!post.likes.map(id => id.toString()).includes(userId)) {
+      post.likes.push(req.user._id);
+      await post.save();
+    }
+    res.status(200).json({ likes: post.likes.length });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Unlike a post
+// @route   POST /api/posts/:id/unlike
+// @access  Private
+exports.unlikePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    const userId = req.user._id.toString();
+    post.likes = post.likes.filter(id => id.toString() !== userId);
+    await post.save();
+    res.status(200).json({ likes: post.likes.length });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Increment post views
+// @route   POST /api/posts/:id/view
+// @access  Public
+exports.incrementView = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { views: 1 } },
+      { new: true }
+    );
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+    res.status(200).json({ views: post.views });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Get analytics for current user's posts
+// @route   GET /api/posts/my-analytics
+// @access  Private
+exports.getMyAnalytics = async (req, res) => {
+  try {
+    const myPosts = await Post.find({ user: req.user._id }).select('_id views likes');
+    const postIds = myPosts.map(p => p._id);
+    const commentsCount = await Comment.countDocuments({ post: { $in: postIds } });
+    const totalViews = myPosts.reduce((sum, p) => sum + (p.views || 0), 0);
+    const totalLikes = myPosts.reduce((sum, p) => sum + (p.likes?.length || 0), 0);
+    res.json({ totalViews, totalLikes, totalComments: commentsCount });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }

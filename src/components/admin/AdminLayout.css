@@ -1,0 +1,7 @@
+.admin-layout{display:grid;grid-template-columns:240px 1fr;gap:16px}
+.admin-sidebar{border-right:1px solid #eee;padding-right:12px}
+.admin-nav{display:grid;gap:6px}
+.admin-link{display:block;padding:8px 12px;border-radius:6px;text-decoration:none;color:#444;transition:background .15s,color .15s}
+.admin-link:hover{background:#f6f6f6;color:#111}
+.admin-link.active{background:#eaeaea;color:#111}
+.admin-content{padding-right:4px}

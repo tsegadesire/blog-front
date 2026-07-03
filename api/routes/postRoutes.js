@@ -7,7 +7,11 @@ const {
   createPost,
   updatePost,
   deletePost,
-  getUserPosts // <-- Add this to your import
+  getUserPosts,
+  likePost,
+  unlikePost,
+  incrementView,
+  getMyAnalytics
 } = require('../controllers/postController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -24,6 +28,14 @@ router.route('/')
 // --- NEW ROUTE FOR USER'S OWN POSTS ---
 router.get('/my-posts', protect, getUserPosts); // This route must come before /:id to avoid conflict
 // --- END NEW ROUTE ---
+
+// --- Analytics for current user's posts ---
+router.get('/my-analytics', protect, getMyAnalytics);
+
+// --- Reactions & Views ---
+router.post('/:id/like', protect, likePost);
+router.post('/:id/unlike', protect, unlikePost);
+router.post('/:id/view', incrementView);
 
 router.route('/:id')
   .get(getPostById)

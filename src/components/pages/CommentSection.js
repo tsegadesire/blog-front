@@ -1,115 +1,225 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useMemo, useState } from 'react';
+import { MessageCircle as MessageCircleIcon, Trash as TrashIcon, Heart as HeartIcon, Reply as ReplyIcon } from 'lucide-react';
+import useAuth from '../../hooks/useAuth';
+import API from '../../api/axiosInstance';
+import './CommentSection.css';
 
-const CommentSection = ({ postId, token }) => {
+const placeholderAvatar = 'https://api.dicebear.com/7.x/initials/svg?seed=User&backgroundType=gradientLinear';
+
+const CommentSection = ({ postId }) => {
+  const { currentUser, isAdmin } = useAuth();
+
   const [comments, setComments] = useState([]);
-  const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [posting, setPosting] = useState(false);
+  const [error, setError] = useState('');
 
-  // 🔁 Fetch comments when component mounts
+  const [newComment, setNewComment] = useState('');
+  const [openReplyFor, setOpenReplyFor] = useState(null); // commentId
+  const [replyText, setReplyText] = useState({}); // map by commentId
+
+  const totalCount = useMemo(() => comments.length, [comments]);
+
+  const formatDate = (iso) => {
+    try {
+      return new Date(iso).toLocaleString(undefined, {
+        year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+    } catch { return ''; }
+  };
+
+  const author = (c) => c.author || c.user || {};
+  const authorId = (c) => author(c)._id || author(c).id;
+  const authorName = (c) => author(c).name || author(c).username || 'Unknown';
+  const authorPhoto = (c) => author(c).photo || author(c).avatar || author(c).image || placeholderAvatar;
+
+  const normalize = (c) => {
+    const likesArr = Array.isArray(c.likes) ? c.likes : [];
+    const likesCount = Array.isArray(c.likes) ? c.likes.length : (typeof c.likes === 'number' ? c.likes : 0);
+    const liked = currentUser ? likesArr.some((u) => (u?._id || u) === currentUser._id) : false;
+    return {
+      ...c,
+      createdAt: c.createdAt || c.date,
+      parentId: c.parentId || c.parent || null,
+      likesCount,
+      liked,
+    };
+  };
+
   useEffect(() => {
-    const fetchComments = async () => {
+    let ignore = false;
+    const load = async () => {
+      if (!postId) return;
+      setLoading(true);
+      setError('');
       try {
-        setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/posts/${postId}/comments`);
-        setComments(res.data);
-      } catch (err) {
-        console.error('Failed to fetch comments:', err.message);
+        const res = await API.get(`/comments/${postId}`);
+        if (!ignore) setComments((res.data || []).map(normalize));
+      } catch (e) {
+        if (!ignore) setError('Failed to load comments');
       } finally {
-        setLoading(false);
+        if (!ignore) setLoading(false);
       }
     };
+    load();
+    return () => { ignore = true; };
+  }, [postId, currentUser]);
 
-    fetchComments();
-  }, [postId]);
+  const canDelete = (c) => currentUser && (isAdmin || currentUser._id === authorId(c));
 
-  // 📝 Submit new comment
-  const handleSubmit = async (e) => {
+  const topLevel = comments.filter((c) => !c.parentId);
+  const repliesOf = (id) => comments.filter((c) => c.parentId === id);
+
+  const handlePostComment = async (e) => {
     e.preventDefault();
-    if (!text.trim()) return;
-
+    const content = newComment.trim();
+    if (!content) return;
     try {
-      setPosting(true);
-     const res = await axios.post(
-  `http://localhost:5000/api/posts/${postId}/comments`,  // <-- add slash here
-  { text },
-  { headers: { Authorization: `Bearer ${token}` } }
-);
+      const res = await API.post('/comments', { postId, content });
+      setComments((prev) => [...prev, normalize(res.data)]);
+      setNewComment('');
+    } catch (e) {}
+  };
 
-      setComments([res.data, ...comments]);
-      setText('');
-    } catch (err) {
-      console.error('Failed to post comment:', err.message);
-    } finally {
-      setPosting(false);
-    }
+  const handlePostReply = async (e, commentId) => {
+    e.preventDefault();
+    const content = (replyText[commentId] || '').trim();
+    if (!content) return;
+    try {
+      const res = await API.post(`/comments/${commentId}/reply`, { content });
+      setComments((prev) => [...prev, normalize(res.data)]);
+      setReplyText((m) => ({ ...m, [commentId]: '' }));
+      setOpenReplyFor(null);
+    } catch (e) {}
+  };
+
+  const handleToggleLike = async (id) => {
+    try {
+      await API.put(`/comments/${id}/like`);
+      setComments((prev) => prev.map((c) => {
+        if (c._id !== id) return c;
+        const liked = !c.liked;
+        const likesCount = liked ? c.likesCount + 1 : Math.max(0, c.likesCount - 1);
+        return { ...c, liked, likesCount };
+      }));
+    } catch (e) {}
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await API.delete(`/comments/${id}`);
+      setComments((prev) => prev.filter((c) => c._id !== id));
+    } catch (e) {}
   };
 
   return (
-    <section className="bg-white dark:bg-gray-900 py-8 lg:py-16 antialiased">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-            Discussion ({comments.length})
-          </h2>
-        </div>
+    <section className="cs-section">
+      <h3 className="cs-title">
+        <MessageCircleIcon size={20} /> <span>Comments ({totalCount})</span>
+      </h3>
 
-        {/* Comment Form */}
-        <form onSubmit={handleSubmit} className="mb-6">
-          <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-            <label htmlFor="comment" className="sr-only">Your comment</label>
-            <textarea
-              id="comment"
-              rows="4"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-              placeholder="Write a comment..."
-              required
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            disabled={posting}
-            className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900"
-          >
-            {posting ? 'Posting...' : 'Post comment'}
-          </button>
+      {currentUser ? (
+        <form onSubmit={handlePostComment} className="cs-form">
+          <textarea
+            className="cs-textarea"
+            rows={3}
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+          />
+          <button type="submit" className="cs-btn cs-btn-primary">Post Comment</button>
         </form>
+      ) : (
+        <div className="cs-login">
+          Please log in to leave a comment. <a href="/login">Login</a>
+        </div>
+      )}
 
-        {/* Comments */}
-        {loading ? (
-          <p className="text-gray-500 dark:text-gray-400">Loading comments...</p>
-        ) : (
-          comments.map((comment) => (
-            <article key={comment._id} className="p-6 text-base bg-white rounded-lg dark:bg-gray-900 mb-4">
-              <footer className="flex justify-between items-center mb-2">
-                <div className="flex items-center">
-                  <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold">
-                    <img
-  className="mr-2 w-6 h-6 rounded-full"
-  src={
-    comment.author.profilePic
-      ? `http://localhost:5000/uploads/profile/${comment.author.profilePic}`
-      : '/default.png'
-  }
-  alt={comment.author.username}
-/>
+      {loading && <div className="cs-loading">Loading comments...</div>}
+      {error && <div className="cs-error">{error}</div>}
 
-                    {comment.author.username}
-                  </p>
+      <div className="cs-list">
+        {topLevel.map((c) => (
+          <article key={c._id} className="cs-card">
+            <header className="cs-header">
+              <img src={authorPhoto(c)} alt={authorName(c)} className="cs-avatar" />
+              <div className="cs-meta">
+                <div className="cs-author">{authorName(c)}</div>
+                <div className="cs-date">{formatDate(c.createdAt)}</div>
+              </div>
+              {canDelete(c) && (
+                <button className="cs-icon cs-delete" onClick={() => handleDelete(c._id)} aria-label="Delete">
+                  <TrashIcon size={18} />
+                </button>
+              )}
+            </header>
+            <p className="cs-content">{c.content}</p>
+            <div className="cs-actions">
+              {currentUser && (
+                <button
+                  className={`cs-icon cs-like ${c.liked ? 'liked' : ''}`}
+                  onClick={() => handleToggleLike(c._id)}
+                  aria-pressed={c.liked}
+                >
+                  <HeartIcon size={18} /> <span>{c.likesCount || 0}</span>
+                </button>
+              )}
+              {currentUser && (
+                <button
+                  className="cs-icon cs-reply"
+                  onClick={() => setOpenReplyFor(openReplyFor === c._id ? null : c._id)}
+                >
+                  <ReplyIcon size={18} /> Reply
+                </button>
+              )}
+            </div>
 
+            {openReplyFor === c._id && currentUser && (
+              <form onSubmit={(e) => handlePostReply(e, c._id)} className="cs-reply-form">
+                <textarea
+                  className="cs-textarea"
+                  rows={2}
+                  value={replyText[c._id] || ''}
+                  onChange={(e) => setReplyText((m) => ({ ...m, [c._id]: e.target.value }))}
+                  placeholder="Write a reply..."
+                />
+                <button type="submit" className="cs-btn cs-btn-primary">Reply</button>
+              </form>
+            )}
 
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-              </footer>
-              <p className="text-gray-500 dark:text-gray-400">{comment.text}</p>
-            </article>
-          ))
-        )}
+            {repliesOf(c._id).length > 0 && (
+              <div className="cs-replies">
+                {repliesOf(c._id).map((r) => (
+                  <article key={r._id} className="cs-card cs-reply-card">
+                    <header className="cs-header">
+                      <img src={authorPhoto(r)} alt={authorName(r)} className="cs-avatar" />
+                      <div className="cs-meta">
+                        <div className="cs-author">{authorName(r)}</div>
+                        <div className="cs-date">{formatDate(r.createdAt)}</div>
+                      </div>
+                      {canDelete(r) && (
+                        <button className="cs-icon cs-delete" onClick={() => handleDelete(r._id)} aria-label="Delete reply">
+                          <TrashIcon size={18} />
+                        </button>
+                      )}
+                    </header>
+                    <p className="cs-content">{r.content}</p>
+                    <div className="cs-actions">
+                      {currentUser && (
+                        <button
+                          className={`cs-icon cs-like ${r.liked ? 'liked' : ''}`}
+                          onClick={() => handleToggleLike(r._id)}
+                          aria-pressed={r.liked}
+                        >
+                          <HeartIcon size={18} /> <span>{r.likesCount || 0}</span>
+                        </button>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
       </div>
     </section>
   );

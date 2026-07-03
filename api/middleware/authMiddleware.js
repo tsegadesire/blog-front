@@ -22,4 +22,11 @@ console.log("User from DB:", user);
   }
 };
 
-module.exports = { protect };
+const isAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === 'admin' || req.user.role === 'superadmin')) {
+    return next();
+  }
+  return res.status(403).json({ message: 'Admin access only' });
+};
+
+module.exports = { protect, isAdmin };

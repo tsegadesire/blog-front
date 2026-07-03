@@ -17,4 +17,20 @@ const logout = () => {
   // For now, just clear client-side storage
 };
 
-export { register, login, logout };
+// Admin: user management
+const getUsers = async () => {
+  const response = await API.get('/users');
+  return response.data;
+};
+
+const getUserById = async (id) => {
+  const response = await API.get(`/users/${id}`);
+  return response.data;
+};
+
+const deleteUser = async (id) => {
+  const response = await API.delete(`/users/${id}`);
+  return response.data;
+};
+
+export { register, login, logout, getUsers, getUserById, deleteUser };

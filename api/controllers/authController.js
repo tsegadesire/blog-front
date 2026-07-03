@@ -20,6 +20,7 @@ exports.register = async (req, res) => {
       _id: user._id,
       username: user.username,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id),
       
     });
@@ -52,6 +53,7 @@ console.log("Generated token:", token);
     _id: user._id,
     username: user.username,
     email: user.email,
+    role: user.role,
     token, // ✅ this is needed for frontend
   });
 

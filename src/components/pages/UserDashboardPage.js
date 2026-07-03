@@ -12,6 +12,8 @@ const UserDashboardPage = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [error, setError] = useState('');
+  const [analytics, setAnalytics] = useState({ totalViews: 0, totalLikes: 0, totalComments: 0 });
+  const [loadingAnalytics, setLoadingAnalytics] = useState(true);
 
   useEffect(() => {
     const fetchUserPosts = async () => {
@@ -33,8 +35,21 @@ const UserDashboardPage = () => {
       }
     };
 
+    const fetchAnalytics = async () => {
+      if (!user) { setLoadingAnalytics(false); return; }
+      try {
+        const data = await postService.getMyAnalytics();
+        setAnalytics(data);
+      } catch (err) {
+        console.error('Error fetching analytics:', err);
+      } finally {
+        setLoadingAnalytics(false);
+      }
+    };
+
     if (!authLoading) { // Only fetch posts if auth loading is complete
       fetchUserPosts();
+      fetchAnalytics();
     }
   }, [user, authLoading]); // Re-run when user or authLoading state changes
 
@@ -52,11 +67,27 @@ const UserDashboardPage = () => {
     <div className="user-dashboard-page">
       <h1>Welcome, {user.username}!</h1> {/* Display user's name */}
       <p>Your email: {user.email}</p>
-  <Link to="/profile"> <img
-  src={`http://localhost:5000/uploads/profile/${user.profilePic}`}
-  alt="Profile"
-  style={{ width: '100px', borderRadius: '50%' }}
-/></Link>
+      <Link to="/profile"> <img
+        src={`http://localhost:5000/uploads/profile/${user.profilePic}`}
+        alt="Profile"
+        style={{ width: '100px', borderRadius: '50%' }}
+      /></Link>
+
+      <div style={{ marginTop: 16, display: 'flex', gap: 16 }}>
+        <div style={{ padding: 12, border: '1px solid #eee' }}>
+          <div>Total Views</div>
+          {loadingAnalytics ? <div>...</div> : <strong>{analytics.totalViews}</strong>}
+        </div>
+        <div style={{ padding: 12, border: '1px solid #eee' }}>
+          <div>Total Likes</div>
+          {loadingAnalytics ? <div>...</div> : <strong>{analytics.totalLikes}</strong>}
+        </div>
+        <div style={{ padding: 12, border: '1px solid #eee' }}>
+          <div>Total Comments</div>
+          {loadingAnalytics ? <div>...</div> : <strong>{analytics.totalComments}</strong>}
+        </div>
+      </div>
+
       <div className="dashboard-actions">
         <Link to="/create-post" className="btn btn-primary">Create New Post</Link>
         {/* Add more actions here, e.g., <Link to="/edit-profile">Edit Profile</Link> */}

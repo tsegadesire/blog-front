@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MessageCircle as MessageCircleIcon,
   Trash as TrashIcon,
@@ -45,49 +45,48 @@ const CommentSection = ({ postId }) => {
   const authorPhoto = (c) =>
     author(c).photo || author(c).avatar || author(c).image || placeholderAvatar;
 
-  const normalize = (c) => {
-    const likesArr = Array.isArray(c.likes) ? c.likes : [];
-    const likesCount = Array.isArray(c.likes)
-      ? c.likes.length
-      : typeof c.likes === "number"
-        ? c.likes
-        : 0;
-    const liked = currentUser
-      ? likesArr.some((u) => (u?._id || u) === currentUser._id)
-      : false;
-    return {
-      ...c,
-      createdAt: c.createdAt || c.date,
-      parentId: c.parentId || c.parent || null,
-      likesCount,
-      liked,
-    };
-  };
-
-  useEffect(
-    () => {
-      let ignore = false;
-      const load = async () => {
-        if (!postId) return;
-        setLoading(true);
-        setError("");
-        try {
-          const res = await API.get(`/comments/${postId}`);
-          if (!ignore) setComments((res.data || []).map(normalize));
-        } catch (e) {
-          if (!ignore) setError("Failed to load comments");
-        } finally {
-          if (!ignore) setLoading(false);
-        }
-      };
-      load();
-      return () => {
-        ignore = true;
+  const normalize = useCallback(
+    (c) => {
+      const likesArr = Array.isArray(c.likes) ? c.likes : [];
+      const likesCount = Array.isArray(c.likes)
+        ? c.likes.length
+        : typeof c.likes === "number"
+          ? c.likes
+          : 0;
+      const liked = currentUser
+        ? likesArr.some((u) => (u?._id || u) === currentUser._id)
+        : false;
+      return {
+        ...c,
+        createdAt: c.createdAt || c.date,
+        parentId: c.parentId || c.parent || null,
+        likesCount,
+        liked,
       };
     },
-    [postId, currentUser],
-    [normalize],
+    [currentUser],
   );
+
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      if (!postId) return;
+      setLoading(true);
+      setError("");
+      try {
+        const res = await API.get(`/comments/${postId}`);
+        if (!ignore) setComments((res.data || []).map(normalize));
+      } catch (e) {
+        if (!ignore) setError("Failed to load comments");
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      ignore = true;
+    };
+  }, [postId, normalize]);
 
   const canDelete = (c) =>
     currentUser && (isAdmin || currentUser._id === authorId(c));

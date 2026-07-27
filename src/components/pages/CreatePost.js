@@ -46,7 +46,7 @@ export default function App() {
         return;
       }
 
-      const res = await API.post('/posts', formData, {
+      await API.post('/posts', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
@@ -54,14 +54,11 @@ export default function App() {
       });
 
       setMessage('✅ Your post has been successfully published to Techethio Blog!');
-
-      // Optional: clear fields (we're navigating away immediately anyway)
       setTitle('');
       setSummary('');
       setContent('');
       setCategory('');
       setImage(null);
-
       navigate('/');
     } catch (error) {
       setMessage(error.response?.data?.message || 'Failed to create post');
